@@ -1,0 +1,45 @@
+### Create Course
+POST http://localhost:8080/course
+Content-Type: application/json
+
+{
+
+  "price": 0.0,
+  "duration": 30
+}
+
+### Get Course by ID
+GET http://localhost:8080/course/4
+
+### Get Course List
+GET http://localhost:8080/course
+
+### Update Course
+PUT http://localhost:8080/course/{id}
+Content-Type: application/json
+
+{
+  "name": "Updated Course Name",
+  "price": 120.00,
+  "duration": 45,
+  "createdDate": "2024-10-10"
+}
+
+
+### Get Course by Name
+GET http://localhost:8080/course/name/{name}
+
+### Get Course by Price
+GET http://localhost:8080/course/price/{price}
+
+### Get Course by Duration
+GET http://localhost:8080/course/duration/{duration}
+
+### Get Course List Between Given Two Prices
+GET http://localhost:8080/course/prices?min={minPrice}&max={maxPrice}
+
+### Get Course List Between Two Created Dates
+GET http://localhost:8080/course/created-dates?start={startDate}&end={endDate}
+
+### Delete Course
+DELETE http://localhost:8080/course/{id}

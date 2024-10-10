@@ -1,0 +1,55 @@
+### Create a new student
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "Odil",
+  "surname": "Yaxshiboyev",
+  "level": "ADVANCED",
+  "age": 22,
+  "gender": "MALE"
+}
+
+
+### Find a student by ID
+GET http://localhost:8080/students/34
+
+### Find all students
+GET http://localhost:8080/students
+
+### Find students by name
+GET http://localhost:8080/students/name/John
+
+### Find students by surname
+GET http://localhost:8080/students/surname/Doe
+
+### Find students by level
+GET http://localhost:8080/students/level/ADVANCED
+
+### Find students by age
+GET http://localhost:8080/students/age/20
+
+### Find students by gender
+GET http://localhost:8080/students/gender/
+
+### Find students by given date
+GET http://localhost:8080/students/date/2024-10-10
+
+### Find students by given date range
+GET http://localhost:8080/students/date/2020-01-01/2020-01-31
+
+### Update a student by ID
+PUT http://localhost:8080/students/2
+Content-Type: application/json
+
+{
+  "name": "John",
+  "surname": "Doe",
+  "level": "BEGINNER",
+  "age": 20,
+  "gender": "MALE"
+}
+
+
+### Delete a student by ID
+DELETE http://localhost:8080/students/2
