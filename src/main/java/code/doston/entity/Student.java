@@ -25,7 +25,7 @@ public class Student {
     private Gender gender;
     private LocalDate createdDate;
 
-
+// buni coursedagiga o'xshab qilsa ham bo'ladi.
     @PrePersist
     public void prePersist() {
         this.createdDate = LocalDate.now();

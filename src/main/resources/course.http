@@ -1,45 +1,49 @@
-### Create Course
+### Create a new course
 POST http://localhost:8080/course
 Content-Type: application/json
 
 {
-
-  "price": 0.0,
-  "duration": 30
+  "name": "Graphic Design Basics",
+  "description": "Introduction to graphic design principles and tools.",
+  "duration": 40,
+  "price": 100.00
 }
 
-### Get Course by ID
-GET http://localhost:8080/course/4
 
-### Get Course List
+
+### Get all courses
 GET http://localhost:8080/course
 
-### Update Course
-PUT http://localhost:8080/course/{id}
+### Get a course by ID
+GET http://localhost:8080/course/1
+
+### Delete a course by ID
+DELETE http://localhost:8080/course/3
+
+### Update a course by ID
+PUT http://localhost:8080/course/1
 Content-Type: application/json
 
 {
-  "name": "Updated Course Name",
-  "price": 120.00,
-  "duration": 45,
-  "createdDate": "2024-10-10"
+  "name": "Cybersecurity Essentials",
+  "description": "Learn the basics of cybersecurity.",
+  "duration": 30,
+  "price": 135.50,
+  "createdDate": "2024-06-15"
 }
 
 
-### Get Course by Name
-GET http://localhost:8080/course/name/{name}
+### Get courses by name
+GET http://localhost:8080/course/name?name=Introduction to Java
 
-### Get Course by Price
-GET http://localhost:8080/course/price/{price}
+### Get course by price
+GET http://localhost:8080/course/price?price=99.99
 
-### Get Course by Duration
-GET http://localhost:8080/course/duration/{duration}
+### Get course by duration
+GET http://localhost:8080/course/duration?duration=30
 
-### Get Course List Between Given Two Prices
-GET http://localhost:8080/course/prices?min={minPrice}&max={maxPrice}
+### Get course list between two prices
+GET http://localhost:8080/course/price-range?min=50.00&max=150.00
 
-### Get Course List Between Two Created Dates
-GET http://localhost:8080/course/created-dates?start={startDate}&end={endDate}
-
-### Delete Course
-DELETE http://localhost:8080/course/{id}
+### Get course list between two created dates
+GET http://localhost:8080/course/date-range?startDate=2024-10-01&endDate=2024-10-10

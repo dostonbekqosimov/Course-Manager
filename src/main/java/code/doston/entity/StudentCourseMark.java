@@ -13,14 +13,14 @@ public class StudentCourseMark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "student_id")
-    private Long studentId;
+//    @Column(name = "student_id")
+//    private Long studentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", insertable = false, updatable = false)
     private Student student;
-    @Column(name = "course_id")
-    private Long courseId;
+//    @Column(name = "course_id")
+//    private Long courseId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", insertable = false, updatable = false)
     private Course course;

@@ -16,12 +16,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
     private BigDecimal price;
     private Integer duration;
     private LocalDate createdDate;
 
-    @PrePersist
-    public void prePersist() {
-        createdDate = LocalDate.now();
-    }
 }

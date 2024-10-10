@@ -26,6 +26,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     List<Student> findByCreatedDate(LocalDate createdDate);
 
-    @Query("SELECT s FROM Student s WHERE s.createdDate BETWEEN :startDate AND :endDate")
-    List<Student> findByCreatedDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<Student> findByCreatedDateBetween(LocalDate startDate, LocalDate endDate);
+
 }

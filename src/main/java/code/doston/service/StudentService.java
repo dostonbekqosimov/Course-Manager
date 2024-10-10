@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,8 @@ public class StudentService {
 
     public StudentResponseDTO createStudent(StudentCreationDTO studentCreationDTO) {
 
+        // Check if the enum values are valid
+        checkEnumValue(studentCreationDTO);
 
         Student student = modelMapper.map(studentCreationDTO, Student.class);
         studentRepository.save(student);
@@ -37,7 +40,6 @@ public class StudentService {
 
 
     }
-
 
 
     public StudentResponseDTO getStudent(Long id) {
@@ -170,6 +172,15 @@ public class StudentService {
         boolean isExist = studentRepository.existsById(id);
         if (!isExist) {
             throw new IdExistsException("Student not found with id: ", id);
+        }
+    }
+
+    public void checkEnumValue(StudentCreationDTO studentCreationDTO) {
+        if (!EnumSet.allOf(Gender.class).contains(studentCreationDTO.getGender())) {
+            throw new IllegalArgumentException("Invalid gender value: " + studentCreationDTO.getGender());
+        }
+        if (!EnumSet.allOf(Level.class).contains(studentCreationDTO.getLevel())) {
+            throw new IllegalArgumentException("Invalid level value: " + studentCreationDTO.getLevel());
         }
     }
 }

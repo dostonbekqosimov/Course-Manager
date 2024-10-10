@@ -3,12 +3,16 @@ POST http://localhost:8080/students
 Content-Type: application/json
 
 {
-  "name": "Odil",
-  "surname": "Yaxshiboyev",
-  "level": "ADVANCED",
-  "age": 22,
-  "gender": "MALE"
+  "name": "Dilnoza",
+  "surname": "Toshpulatova",
+  "level": "UPPER_INTERMEDIATE",
+  "age": 19,
+  "gender": "FEMALE"
 }
+
+
+
+
 
 
 ### Find a student by ID
@@ -43,12 +47,13 @@ PUT http://localhost:8080/students/2
 Content-Type: application/json
 
 {
-  "name": "John",
-  "surname": "Doe",
-  "level": "BEGINNER",
-  "age": 20,
+  "name": "Botir",
+  "surname": "Yaxshiboyev",
+  "level": "UPPER_INTERMEDIATE",
+  "age": 22,
   "gender": "MALE"
 }
+
 
 
 ### Delete a student by ID
