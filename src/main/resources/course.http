@@ -43,7 +43,10 @@ GET http://localhost:8080/course/price?price=99.99
 GET http://localhost:8080/course/duration?duration=30
 
 ### Get course list between two prices
-GET http://localhost:8080/course/price-range?min=50.00&max=150.00
+GET http://localhost:8080/course/price-range?min=76.00&max=150.00
 
 ### Get course list between two created dates
-GET http://localhost:8080/course/date-range?startDate=2024-10-01&endDate=2024-10-10
+GET http://localhost:8080/course/date-range?startDate=1996-08-01&endDate=2024-10-10
+
+###
+ GET localhost

@@ -7,6 +7,7 @@ import code.doston.entity.Student;
 import code.doston.entity.enums.Gender;
 import code.doston.entity.enums.Level;
 import code.doston.exceptions.DataNotFoundException;
+import code.doston.exceptions.EnumValidationException;
 import code.doston.exceptions.IdExistsException;
 import code.doston.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +31,17 @@ public class StudentService {
 
     public StudentResponseDTO createStudent(StudentCreationDTO studentCreationDTO) {
 
-        // Check if the enum values are valid
+        // Check if the enum values are valid(ishlamadi bu)
         checkEnumValue(studentCreationDTO);
+
+
 
         Student student = modelMapper.map(studentCreationDTO, Student.class);
         studentRepository.save(student);
 
         return modelMapper.map(student, StudentResponseDTO.class);
+
+
 
 
     }
@@ -177,10 +182,10 @@ public class StudentService {
 
     public void checkEnumValue(StudentCreationDTO studentCreationDTO) {
         if (!EnumSet.allOf(Gender.class).contains(studentCreationDTO.getGender())) {
-            throw new IllegalArgumentException("Invalid gender value: " + studentCreationDTO.getGender());
+            throw new EnumValidationException("Invalid gender value: ");
         }
         if (!EnumSet.allOf(Level.class).contains(studentCreationDTO.getLevel())) {
-            throw new IllegalArgumentException("Invalid level value: " + studentCreationDTO.getLevel());
+            throw new EnumValidationException("Invalid level value: ");
         }
     }
 }

@@ -3,11 +3,11 @@ POST http://localhost:8080/students
 Content-Type: application/json
 
 {
-  "name": "Dilnoza",
-  "surname": "Toshpulatova",
-  "level": "UPPER_INTERMEDIATE",
-  "age": 19,
-  "gender": "FEMALE"
+  "name": "John",
+  "surname": "Doe",
+  "level": "INVALID_LEVEL",
+  "age": 20,
+  "gender": "INVALID_GENDER"
 }
 
 
@@ -51,7 +51,7 @@ Content-Type: application/json
   "surname": "Yaxshiboyev",
   "level": "UPPER_INTERMEDIATE",
   "age": 22,
-  "gender": "MALE"
+  "gender": "qqq"
 }
 
 

@@ -3,14 +3,13 @@ package code.doston.handler;
 
 
 import code.doston.exceptions.DataNotFoundException;
-import code.doston.exceptions.DataValidationException;
+import code.doston.exceptions.EnumValidationException;
 import code.doston.exceptions.IdExistsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -40,8 +39,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     }
 
-    @ExceptionHandler(DataValidationException.class)
-    public ResponseEntity<?> exceptionHandler(DataValidationException e) {
+
+
+    @ExceptionHandler(EnumValidationException.class)
+    public ResponseEntity<?> exceptionHandler(EnumValidationException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
@@ -62,3 +63,4 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
 
 }
+

@@ -60,12 +60,7 @@ public class CourseService {
         return modelMapper.map(course, CourseResponseDTO.class);
     }
 
-    public void idNotExists(Long id) {
-        boolean isExist = courseRepository.existsById(id);
-        if (!isExist) {
-            throw new IdExistsException("Course not found with id: ", id);
-        }
-    }
+
 
     public String deleteCourse(Long id) {
 
@@ -168,6 +163,13 @@ public class CourseService {
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public void idNotExists(Long id) {
+        boolean isExist = courseRepository.existsById(id);
+        if (!isExist) {
+            throw new IdExistsException("Course not found with id: ", id);
+        }
     }
 
 

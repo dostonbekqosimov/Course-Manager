@@ -1,0 +1,20 @@
+### Create course mark
+POST localhost:8080/student-course-mark
+Content-Type: application/json
+
+{
+  "studentId": 5,
+  "courseId": 4,
+  "mark": 54,
+  "createdDate": "2024-06-15"
+}
+
+### Update course mark
+PUT localhost:8080/student-course-mark/22
+Content-Type: application/json
+
+{
+  "mark": 100
+}
+
+
