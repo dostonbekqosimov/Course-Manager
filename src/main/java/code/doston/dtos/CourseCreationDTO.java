@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Data
 public class CourseCreationDTO {
 
-    private Long id;
 
     @NotBlank(message = "Name cannot be empty")
     @Size(max = 50, message = "Name cannot be longer than 50 characters")
@@ -28,6 +27,5 @@ public class CourseCreationDTO {
     @Positive(message = "Duration must be a positive number")
     private Integer duration;
 
-    private LocalDate createdDate;
 }
 

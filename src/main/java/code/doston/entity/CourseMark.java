@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "student_course_mark")
@@ -21,5 +22,11 @@ public class CourseMark {
     @JoinColumn(name = "course_id")
     private Course course;
     private Integer mark;
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
 }

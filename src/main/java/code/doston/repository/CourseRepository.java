@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -25,7 +26,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByPriceBetween(BigDecimal min, BigDecimal max);
 
-    List<Course> findByCreatedDateBetween(LocalDate start, LocalDate end);
+    List<Course> findByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
-    boolean existsByCreatedDateBetween(LocalDate start, LocalDate end);
+    boolean existsByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
+
 }

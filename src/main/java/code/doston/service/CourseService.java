@@ -5,7 +5,7 @@ import code.doston.dtos.CourseCreationDTO;
 import code.doston.dtos.CourseResponseDTO;
 import code.doston.entity.Course;
 import code.doston.exceptions.DataNotFoundException;
-import code.doston.exceptions.IdExistsException;
+import code.doston.exceptions.DataExistsException;
 import code.doston.repository.CourseRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,13 +29,17 @@ public class CourseService {
 
     public CourseResponseDTO createCourse(CourseCreationDTO courseCreationDTO) {
 
-        // Set the created date if it is null
-        if (courseCreationDTO.getCreatedDate() == null) {
-            courseCreationDTO.setCreatedDate(LocalDate.now());
+        // Check if the course already exists
+        boolean isExist = courseRepository.existsByName(courseCreationDTO.getName());
+        if (isExist) {
+            throw new DataExistsException("Course already exists with name: " + courseCreationDTO.getName());
         }
+
+        // Save the course in the database
         Course course = modelMapper.map(courseCreationDTO, Course.class);
         courseRepository.save(course);
 
+        // Map the Course to CourseResponseDTO using ModelMapper
         return modelMapper.map(course, CourseResponseDTO.class);
     }
 
@@ -41,6 +47,11 @@ public class CourseService {
 
         // Get all courses
         List<Course> courses = courseRepository.findAll();
+
+        // Check if the list is empty
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException("No courses found");
+        }
 
         // Map each Course to CourseResponseDTO using ModelMapper
         return courses.stream()
@@ -72,14 +83,19 @@ public class CourseService {
         return "Course deleted successfully";
     }
 
-    public String updateCourse(Long id, @Valid CourseCreationDTO courseCreationDTO) {
+    public String updateCourse(Long id, CourseCreationDTO courseCreationDTO) {
 
         // Check if the course exists
         idNotExists(id);
 
+        // Get the course from the database
+        Course course = courseRepository.findById(id).get();
+
+        // Update the course properties
+        modelMapper.map(courseCreationDTO, course);
+
+
         // Update the course in the database
-        Course course = modelMapper.map(courseCreationDTO, Course.class);
-        course.setId(id);
         courseRepository.save(course);
         return "Course updated successfully";
     }
@@ -150,25 +166,41 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseResponseDTO> getCoursesByCreatedDateBetween(LocalDate start, LocalDate end) {
+    public List<CourseResponseDTO> getCoursesByCreatedDateBetween(LocalDate startDate, LocalDate endDate) {
+
+        // Check if the start date is before the end date
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+
+        LocalDateTime fromDate = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime toDate = LocalDateTime.of(endDate, LocalTime.MAX);
 
         // Check if the course exists
-        boolean isExist = courseRepository.existsByCreatedDateBetween(start, end);
+        boolean isExist = courseRepository.existsByCreatedDateBetween(fromDate, toDate);
         if (!isExist) {
-            throw new DataNotFoundException("Course not found with createdDate between: " + start + " and " + end);
+            throw new DataNotFoundException("Course not found with createdDate between: " + startDate + " and " + endDate);
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByCreatedDateBetween(start, end);
+        List<Course> courses = courseRepository.findByCreatedDateBetween(fromDate, toDate);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
     }
 
+    public Course getCourseEntityById(Long id) {
+
+        // Check if the course exists
+        idNotExists(id);
+
+        // Get the course from the database
+        return courseRepository.findById(id).get();
+    }
     public void idNotExists(Long id) {
         boolean isExist = courseRepository.existsById(id);
         if (!isExist) {
-            throw new IdExistsException("Course not found with id: ", id);
+            throw new DataExistsException("Course not found with id: ", id);
         }
     }
 

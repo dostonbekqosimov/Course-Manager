@@ -4,6 +4,7 @@ import code.doston.dtos.StudentCreationDTO;
 import code.doston.dtos.StudentResponseDTO;
 import code.doston.entity.enums.Gender;
 import code.doston.entity.enums.Level;
+import code.doston.exceptions.EnumValidationException;
 import code.doston.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
 
 // Should consider to change from path variable to query params
@@ -25,6 +27,9 @@ public class StudentController {
     // Create a new student
     @PostMapping
     public ResponseEntity<?> createStudent(@Valid @RequestBody StudentCreationDTO studentCreationDTO) {
+
+        // Check if the enum values are valid(bu service da ishlamadi, buyerdayam ishlamadi)
+        checkEnumValue(studentCreationDTO);
 
         return ResponseEntity.ok().body(studentService.createStudent(studentCreationDTO));
     }
@@ -103,6 +108,15 @@ public class StudentController {
         LocalDate end = LocalDate.parse(endDate); // Ensure the date format matches your input
         List<StudentResponseDTO> students = studentService.getStudentsByCreatedDateBetween(start, end);
         return ResponseEntity.ok(students);
+    }
+
+    public void checkEnumValue(StudentCreationDTO studentCreationDTO) {
+        if (!EnumSet.allOf(Gender.class).contains(studentCreationDTO.getGender())) {
+            throw new EnumValidationException("Invalid gender value: ");
+        }
+        if (!EnumSet.allOf(Level.class).contains(studentCreationDTO.getLevel())) {
+            throw new EnumValidationException("Invalid level value: ");
+        }
     }
 
 }

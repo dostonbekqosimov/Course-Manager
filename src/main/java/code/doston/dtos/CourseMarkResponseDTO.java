@@ -9,4 +9,6 @@ public class CourseMarkResponseDTO {
     private Long studentId;
     private Long courseId;
     private Integer mark;
+
+
 }

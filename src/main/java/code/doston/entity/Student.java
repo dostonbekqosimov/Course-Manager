@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "student")
@@ -23,12 +24,13 @@ public class Student {
     private Integer age;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 
-// buni coursedagiga o'xshab qilsa ham bo'ladi.
+    // buni coursedagiga o'xshab qilsa ham bo'ladi.
     @PrePersist
     public void prePersist() {
-        this.createdDate = LocalDate.now();
+        this.createdDate = LocalDateTime.now();
     }
 
 }

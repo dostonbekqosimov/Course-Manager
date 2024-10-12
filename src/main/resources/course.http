@@ -3,7 +3,7 @@ POST http://localhost:8080/course
 Content-Type: application/json
 
 {
-  "name": "Graphic Design Basics",
+  "name": "Introduction to Java",
   "description": "Introduction to graphic design principles and tools.",
   "duration": 40,
   "price": 100.00
@@ -28,8 +28,7 @@ Content-Type: application/json
   "name": "Cybersecurity Essentials",
   "description": "Learn the basics of cybersecurity.",
   "duration": 30,
-  "price": 135.50,
-  "createdDate": "2024-06-15"
+  "price": 135.50
 }
 
 

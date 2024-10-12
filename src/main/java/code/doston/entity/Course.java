@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "courses")
@@ -19,6 +20,12 @@ public class Course {
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
 
 }

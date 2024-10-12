@@ -1,20 +1,80 @@
-### Create course mark
+
+### 1. Create Course Mark
 POST localhost:8080/student-course-mark
 Content-Type: application/json
 
 {
   "studentId": 5,
-  "courseId": 4,
-  "mark": 54,
-  "createdDate": "2024-06-15"
+  "courseId": 3,
+  "mark": 54
 }
 
-### Update course mark
+### 2. Update Course Mark
 PUT localhost:8080/student-course-mark/22
 Content-Type: application/json
 
 {
-  "mark": 100
+  "mark": 85
 }
+
+### 3. Get Course Mark by ID
+GET localhost:8080/student-course-mark/2
+
+### 4. Get Course Mark Detail by ID
+GET localhost:8080/student-course-mark/detail/2
+
+### 5. Delete Course Mark
+DELETE localhost:8080/student-course-mark/22
+
+### 6. Get All Course Marks
+GET localhost:8080/student-course-mark
+
+### 7. Get Student's Course Marks by Date
+GET localhost:8080/student-course-mark/student/5/date?date=2024-10-12
+
+### 8. Get Student's Course Marks by Date Range
+GET localhost:8080/student-course-mark/student/5/date-range?startDate=2024-10-12&endDate=2024-10-16
+
+### 9. Get Student's Course Marks sorted by Date
+GET localhost:8080/student-course-mark/student/5/marks/sorted?sort=desc
+
+### 10.  get student's marks for a given course, sorted by creation date
+GET localhost:8080/student-course-mark/student/5/course/3/marks/sorted?sort=desc
+
+### 11. get student's last mark
+GET localhost:8080/student-course-mark/student/5/last-mark
+
+### 12. get student's last 3 biggest marks
+GET localhost:8080/student-course-mark/student/4/last-three-biggest-marks
+
+### 13. get student's first mark
+GET localhost:8080/student-course-mark/student/1/first-mark
+
+### 14. get student's first mark from given course
+GET localhost:8080/student-course-mark/student/5/first-mark/course/3
+
+### 15. get student's the biggest mark from given course
+GET localhost:8080/student-course-mark/student/5/biggest-mark/course/3
+
+### 16. Get student's average marks
+GET localhost:8080/student-course-mark/student/5/average
+
+### 17. Get student's average marks by course
+GET localhost:8080/student-course-mark/student/5/course/3/average
+
+### 18. Count student's marks greater than a given value
+GET localhost:8080/student-course-mark/student/5/marks/count-greater-than/70
+
+### 19. Get the highest mark for a given course
+GET localhost:8080/student-course-mark/course/1/highest-mark
+
+### 20. Get the average mark for a given course
+GET localhost:8080/student-course-mark/course/3/average
+
+### 21. Count marks for a given course
+GET localhost:8080/student-course-mark/course/3/count
+
+
+
 
 

@@ -4,7 +4,7 @@ package code.doston.handler;
 
 import code.doston.exceptions.DataNotFoundException;
 import code.doston.exceptions.EnumValidationException;
-import code.doston.exceptions.IdExistsException;
+import code.doston.exceptions.DataExistsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +46,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(IdExistsException.class)
-    public ResponseEntity<?> exceptionHandler(IdExistsException e) {
+    @ExceptionHandler(DataExistsException.class)
+    public ResponseEntity<?> exceptionHandler(DataExistsException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

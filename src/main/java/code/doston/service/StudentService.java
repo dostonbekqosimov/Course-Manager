@@ -8,13 +8,15 @@ import code.doston.entity.enums.Gender;
 import code.doston.entity.enums.Level;
 import code.doston.exceptions.DataNotFoundException;
 import code.doston.exceptions.EnumValidationException;
-import code.doston.exceptions.IdExistsException;
+import code.doston.exceptions.DataExistsException;
 import code.doston.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,10 +33,6 @@ public class StudentService {
 
     public StudentResponseDTO createStudent(StudentCreationDTO studentCreationDTO) {
 
-        // Check if the enum values are valid(ishlamadi bu)
-        checkEnumValue(studentCreationDTO);
-
-
 
         Student student = modelMapper.map(studentCreationDTO, Student.class);
         studentRepository.save(student);
@@ -49,6 +47,7 @@ public class StudentService {
 
     public StudentResponseDTO getStudent(Long id) {
 
+        // Check if student exists
         idNotExists(id);
 
         return modelMapper.map(studentRepository.findById(id).get(), StudentResponseDTO.class);
@@ -57,6 +56,10 @@ public class StudentService {
     public List<StudentResponseDTO> getAllStudents() {
 
         List<Student> students = studentRepository.findAll();
+
+        if (students.isEmpty()) {
+            throw new DataNotFoundException("No student found");
+        }
 
         // Map each Student to StudentResponseDTO using ModelMapper
         return students.stream()
@@ -75,6 +78,8 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getByName(String name) {
+
+        // Check if the student exists
         List<Student> students = studentRepository.findByName(name);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with name: " + name);
@@ -85,6 +90,7 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getBySurname(String surname) {
+
         List<Student> students = studentRepository.findBySurname(surname);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with surname: " + surname);
@@ -106,6 +112,7 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getByAge(int age) {
+
         List<Student> students = studentRepository.findByAge(age);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with age: " + age);
@@ -126,7 +133,11 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getByCreatedDate(LocalDate createdDate) {
-        List<Student> students = studentRepository.findByCreatedDate(createdDate);
+
+        LocalDateTime fromDate = LocalDateTime.of(createdDate, LocalTime.MIN);
+        LocalDateTime toDate = LocalDateTime.of(createdDate, LocalTime.MAX);
+
+        List<Student> students = studentRepository.findByCreatedDateBetween(fromDate, toDate);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with createdDate: " + createdDate);
         }
@@ -136,7 +147,12 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getStudentsByCreatedDateBetween(LocalDate startDate, LocalDate endDate) {
-        List<Student> students = studentRepository.findByCreatedDateBetween(startDate, endDate);
+
+
+        LocalDateTime fromDate = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime toDate = LocalDateTime.of(endDate, LocalTime.MAX);
+        List<Student> students = studentRepository.findByCreatedDateBetween(fromDate, toDate);
+
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with createdDate between: " + startDate + " and " + endDate);
         }
@@ -161,6 +177,13 @@ public class StudentService {
         return true;
     }
 
+    public Student getStudentEntityById(Long id) {
+
+        // Check if the student exists
+        idNotExists(id);
+        return studentRepository.findById(id).get();
+    }
+
 
     public String deleteStudent(Long id) {
 
@@ -176,16 +199,16 @@ public class StudentService {
     public void idNotExists(Long id) {
         boolean isExist = studentRepository.existsById(id);
         if (!isExist) {
-            throw new IdExistsException("Student not found with id: ", id);
+            throw new DataExistsException("Student not found with id: ", id);
         }
     }
 
-    public void checkEnumValue(StudentCreationDTO studentCreationDTO) {
-        if (!EnumSet.allOf(Gender.class).contains(studentCreationDTO.getGender())) {
-            throw new EnumValidationException("Invalid gender value: ");
-        }
-        if (!EnumSet.allOf(Level.class).contains(studentCreationDTO.getLevel())) {
-            throw new EnumValidationException("Invalid level value: ");
-        }
-    }
+//    public void checkEnumValue(StudentCreationDTO studentCreationDTO) {
+//        if (!EnumSet.allOf(Gender.class).contains(studentCreationDTO.getGender())) {
+//            throw new EnumValidationException("Invalid gender value: ");
+//        }
+//        if (!EnumSet.allOf(Level.class).contains(studentCreationDTO.getLevel())) {
+//            throw new EnumValidationException("Invalid level value: ");
+//        }
+//    }
 }

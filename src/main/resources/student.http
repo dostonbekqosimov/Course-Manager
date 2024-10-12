@@ -5,9 +5,9 @@ Content-Type: application/json
 {
   "name": "John",
   "surname": "Doe",
-  "level": "INVALID_LEVEL",
+  "level": "INTERMEDIATE",
   "age": 20,
-  "gender": "INVALID_GENDER"
+  "gender": "MALE"
 }
 
 
