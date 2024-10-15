@@ -50,7 +50,7 @@ public class StudentService {
         // Check if student exists
         idNotExists(id);
 
-        return modelMapper.map(studentRepository.findById(id).get(), StudentResponseDTO.class);
+        return modelMapper.map(studentRepository.getWithId(id), StudentResponseDTO.class);
     }
 
     public List<StudentResponseDTO> getAllStudents() {
@@ -80,7 +80,7 @@ public class StudentService {
     public List<StudentResponseDTO> getByName(String name) {
 
         // Check if the student exists
-        List<Student> students = studentRepository.findByName(name);
+        List<Student> students = studentRepository.getAllStudentsByName(name);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with name: " + name);
         }
@@ -91,7 +91,7 @@ public class StudentService {
 
     public List<StudentResponseDTO> getBySurname(String surname) {
 
-        List<Student> students = studentRepository.findBySurname(surname);
+        List<Student> students = studentRepository.getAllStudentsBySurname(surname);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with surname: " + surname);
         }
@@ -102,7 +102,7 @@ public class StudentService {
 
     public List<StudentResponseDTO> getByLevel(Level level) {
 
-        List<Student> students = studentRepository.findByLevel(level);
+        List<Student> students = studentRepository.getAllStudentsByLevel(level);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with level: " + level);
         }
@@ -113,7 +113,7 @@ public class StudentService {
 
     public List<StudentResponseDTO> getByAge(int age) {
 
-        List<Student> students = studentRepository.findByAge(age);
+        List<Student> students = studentRepository.getAllStudentsByAge(age);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with age: " + age);
         }
@@ -123,7 +123,7 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> getByGender(Gender gender) {
-        List<Student> students = studentRepository.findByGender(gender);
+        List<Student> students = studentRepository.getAllStudentsByGender(gender);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with gender: " + gender);
         }
@@ -137,7 +137,7 @@ public class StudentService {
         LocalDateTime fromDate = LocalDateTime.of(createdDate, LocalTime.MIN);
         LocalDateTime toDate = LocalDateTime.of(createdDate, LocalTime.MAX);
 
-        List<Student> students = studentRepository.findByCreatedDateBetween(fromDate, toDate);
+        List<Student> students = studentRepository.getAllBetweenDates(fromDate, toDate);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with createdDate: " + createdDate);
         }
@@ -151,7 +151,7 @@ public class StudentService {
 
         LocalDateTime fromDate = LocalDateTime.of(startDate, LocalTime.MIN);
         LocalDateTime toDate = LocalDateTime.of(endDate, LocalTime.MAX);
-        List<Student> students = studentRepository.findByCreatedDateBetween(fromDate, toDate);
+        List<Student> students = studentRepository.getAllBetweenDates(fromDate, toDate);
 
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with createdDate between: " + startDate + " and " + endDate);

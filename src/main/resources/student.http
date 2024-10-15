@@ -3,9 +3,9 @@ POST http://localhost:8080/students
 Content-Type: application/json
 
 {
-  "name": "John",
+  "name": "Doniyor",
   "surname": "Doe",
-  "level": "INTERMEDIATE",
+  "level": "ADVANCED",
   "age": 20,
   "gender": "MALE"
 }
@@ -16,13 +16,13 @@ Content-Type: application/json
 
 
 ### Find a student by ID
-GET http://localhost:8080/students/34
+GET http://localhost:8080/students/3
 
 ### Find all students
 GET http://localhost:8080/students
 
 ### Find students by name
-GET http://localhost:8080/students/name/John
+GET http://localhost:8080/students/name/Doniyor
 
 ### Find students by surname
 GET http://localhost:8080/students/surname/Doe

@@ -46,7 +46,7 @@ public class CourseService {
     public List<CourseResponseDTO> getAllCourses() {
 
         // Get all courses
-        List<Course> courses = courseRepository.findAll();
+        List<Course> courses = courseRepository.getAll();
 
         // Check if the list is empty
         if (courses.isEmpty()) {
@@ -65,7 +65,7 @@ public class CourseService {
         idNotExists(id);
 
         // Get the course from the database
-        Course course = courseRepository.findById(id).get();
+        Course course = courseRepository.getById(id);
 
         // Map the Course to CourseResponseDTO using ModelMapper
         return modelMapper.map(course, CourseResponseDTO.class);
@@ -109,7 +109,7 @@ public class CourseService {
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByName(name);
+        List<Course> courses = courseRepository.getAllByName(name);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
@@ -124,7 +124,7 @@ public class CourseService {
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByPrice(price);
+        List<Course> courses = courseRepository.getAllByPrice(price);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
@@ -139,7 +139,7 @@ public class CourseService {
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByDuration(duration);
+        List<Course> courses = courseRepository.getByDuration(duration);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
@@ -160,7 +160,7 @@ public class CourseService {
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByPriceBetween(min, max);
+        List<Course> courses = courseRepository.getAllBetweenPrice(min, max);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
@@ -183,7 +183,7 @@ public class CourseService {
         }
 
         // Get the course from the database
-        List<Course> courses = courseRepository.findByCreatedDateBetween(fromDate, toDate);
+        List<Course> courses = courseRepository.getAllBetweenDates(fromDate, toDate);
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());

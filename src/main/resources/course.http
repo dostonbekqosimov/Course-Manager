@@ -3,10 +3,10 @@ POST http://localhost:8080/course
 Content-Type: application/json
 
 {
-  "name": "Introduction to Java",
+  "name": "Introduction to C++",
   "description": "Introduction to graphic design principles and tools.",
   "duration": 40,
-  "price": 100.00
+  "price": 150.00
 }
 
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 GET http://localhost:8080/course
 
 ### Get a course by ID
-GET http://localhost:8080/course/1
+GET http://localhost:8080/course/22
 
 ### Delete a course by ID
 DELETE http://localhost:8080/course/3
@@ -36,16 +36,16 @@ Content-Type: application/json
 GET http://localhost:8080/course/name?name=Introduction to Java
 
 ### Get course by price
-GET http://localhost:8080/course/price?price=99.99
+GET http://localhost:8080/course/price?price=100
 
 ### Get course by duration
-GET http://localhost:8080/course/duration?duration=30
+GET http://localhost:8080/course/duration?duration=40
 
 ### Get course list between two prices
-GET http://localhost:8080/course/price-range?min=76.00&max=150.00
+GET http://localhost:8080/course/price-range?min=101.00&max=150.00
 
 ### Get course list between two created dates
-GET http://localhost:8080/course/date-range?startDate=1996-08-01&endDate=2024-10-10
+GET http://localhost:8080/course/date-range?startDate=1996-08-01&endDate=2024-10-15
 
 ###
  GET localhost
