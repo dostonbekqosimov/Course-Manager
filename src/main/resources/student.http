@@ -3,12 +3,22 @@ POST http://localhost:8080/students
 Content-Type: application/json
 
 {
-  "name": "Doniyor",
-  "surname": "Doe",
+  "name": "Madina",
+  "surname": "ddd",
   "level": "ADVANCED",
   "age": 20,
-  "gender": "MALE"
+  "gender": "FEMALE"
 }
+
+### Filter
+POST http://localhost:8080/students/filter?page=1&size=1
+Content-Type: application/json
+
+{
+  "name": "Ma",
+  "level": "ADVANCED"
+}
+
 
 
 
@@ -28,19 +38,19 @@ GET http://localhost:8080/students/name/Doniyor
 GET http://localhost:8080/students/surname/Doe
 
 ### Find students by level
-GET http://localhost:8080/students/level/ADVANCED
+GET http://localhost:8080/students/level/ADVANCED?page=2&size=2
 
 ### Find students by age
 GET http://localhost:8080/students/age/20
 
 ### Find students by gender
-GET http://localhost:8080/students/gender/
+GET http://localhost:8080/students/gender/MALE?page=2&size=2
 
 ### Find students by given date
-GET http://localhost:8080/students/date/2024-10-10
+GET http://localhost:8080/students/date/2024-10-12
 
 ### Find students by given date range
-GET http://localhost:8080/students/date/2020-01-01/2020-01-31
+GET http://localhost:8080/students/date/2020-01-01/2024-10-31
 
 ### Update a student by ID
 PUT http://localhost:8080/students/2

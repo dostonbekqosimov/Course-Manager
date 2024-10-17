@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "studentId": 5,
-  "courseId": 3,
+  "courseId": 5,
   "mark": 54
 }
 
@@ -30,7 +30,7 @@ DELETE localhost:8080/student-course-mark/22
 GET localhost:8080/student-course-mark
 
 ### 7. Get Student's Course Marks by Date
-GET localhost:8080/student-course-mark/student/5/date?date=2024-10-12
+GET localhost:8080/student-course-mark/student/5/date?date=2024-10-17&page=1&size=2
 
 ### 8. Get Student's Course Marks by Date Range
 GET localhost:8080/student-course-mark/student/5/date-range?startDate=2024-10-12&endDate=2024-10-16
@@ -65,6 +65,9 @@ GET localhost:8080/student-course-mark/student/5/course/3/average
 ### 18. Count student's marks greater than a given value
 GET localhost:8080/student-course-mark/student/5/marks/count-greater-than/70
 
+### 18. Get All course by courseId
+GET localhost:8080/student-course-mark/course/3?page=1&size=2
+
 ### 19. Get the highest mark for a given course
 GET localhost:8080/student-course-mark/course/1/highest-mark
 
@@ -73,6 +76,23 @@ GET localhost:8080/student-course-mark/course/3/average
 
 ### 21. Count marks for a given course
 GET localhost:8080/student-course-mark/course/3/count
+
+### 22. Filter
+POST localhost:8080/student-course-mark/filter?page=1&size=2
+Content-Type: application/json
+
+{
+  "studentId": 5,
+  "courseId": 2,
+  "markFrom": 1,
+  "markTo": 100,
+  "createdDateFrom": "1996-10-01",
+  "createdDateTo": "2024-10-17",
+  "studentName": "Joh",
+  "courseName": "Advanced"
+}
+
+
 
 
 

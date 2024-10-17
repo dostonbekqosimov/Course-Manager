@@ -2,10 +2,13 @@ package code.doston.controller;
 
 import code.doston.dtos.CourseCreationDTO;
 import code.doston.dtos.CourseResponseDTO;
-import code.doston.dtos.StudentResponseDTO;
+import code.doston.dtos.filterDTOs.CourseFilterDTO;
+import code.doston.dtos.filterDTOs.StudentFilterDTO;
 import code.doston.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +32,9 @@ public class CourseController {
 
     // Get all courses
     @GetMapping
-    public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
-        return ResponseEntity.ok().body(courseService.getAllCourses());
+    public ResponseEntity<PageImpl<CourseResponseDTO>> getAllCourses(@RequestParam(value = "page", required = false) Integer page,
+                                                                     @RequestParam(value = "size", required = false) Integer size) {
+        return ResponseEntity.ok().body(courseService.getAllCourses(page - 1, size));
     }
 
     // Get a course by ID
@@ -58,9 +62,11 @@ public class CourseController {
     }
 
     // Get course by price
-    @GetMapping("/price")
-    public ResponseEntity<List<CourseResponseDTO>> getByPrice(@RequestParam(value = "price") BigDecimal price) {
-        return ResponseEntity.ok().body(courseService.getByPrice(price));
+    @GetMapping("/price/{price}")
+    public ResponseEntity<PageImpl<CourseResponseDTO>> getByPrice(@PathVariable(value = "price") BigDecimal price,
+                                                                  @RequestParam(value = "page", required = false) Integer page,
+                                                                  @RequestParam(value = "size", required = false) Integer size) {
+        return ResponseEntity.ok().body(courseService.getByPrice(price, page - 1, size));
     }
 
     // Get course by duration
@@ -71,8 +77,11 @@ public class CourseController {
 
     // Get course list between two prices
     @GetMapping("/price-range")
-    public ResponseEntity<List<CourseResponseDTO>> getByPriceRange(@RequestParam(value = "min") BigDecimal min, @RequestParam(value = "max") BigDecimal max) {
-        return ResponseEntity.ok().body(courseService.getByPriceRange(min, max));
+    public ResponseEntity<PageImpl<CourseResponseDTO>> getByPriceRange(@RequestParam(value = "min") BigDecimal min,
+                                                                       @RequestParam(value = "max") BigDecimal max,
+                                                                       @RequestParam(value = "page", required = false) Integer page,
+                                                                       @RequestParam(value = "size", required = false) Integer size) {
+        return ResponseEntity.ok().body(courseService.getByPriceRange(min, max, page, size));
     }
 
     // Get course list between two created dates
@@ -85,8 +94,12 @@ public class CourseController {
         return ResponseEntity.ok().body(courseService.getCoursesByCreatedDateBetween(start, end));
     }
 
-
-
+    @PostMapping("/filter")
+    public ResponseEntity<PageImpl<CourseResponseDTO>> getFilteredStudentList(@RequestBody CourseFilterDTO filter,
+                                                       @RequestParam("page") Integer page,
+                                                       @RequestParam("size") Integer size) {
+        return ResponseEntity.ok(courseService.filter(filter, page - 1, size));
+    }
 
 
 }

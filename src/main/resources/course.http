@@ -3,16 +3,28 @@ POST http://localhost:8080/course
 Content-Type: application/json
 
 {
-  "name": "Introduction to C++",
+  "name": "Introduction to d++",
   "description": "Introduction to graphic design principles and tools.",
   "duration": 40,
   "price": 150.00
 }
 
 
+### Filter
+POST http://localhost:8080/course/filter?page=1&size=6
+Content-Type: application/json
+
+{
+  "price": 100,
+  "duration": 40,
+  "createdDateFrom": "1996-08-01",
+  "createdDateTo": "2024-10-17"
+
+}
+
 
 ### Get all courses
-GET http://localhost:8080/course
+GET http://localhost:8080/course?page=0&size=3
 
 ### Get a course by ID
 GET http://localhost:8080/course/22
@@ -36,7 +48,7 @@ Content-Type: application/json
 GET http://localhost:8080/course/name?name=Introduction to Java
 
 ### Get course by price
-GET http://localhost:8080/course/price?price=100
+GET http://localhost:8080/course/price/100?page=1&size=2
 
 ### Get course by duration
 GET http://localhost:8080/course/duration?duration=40

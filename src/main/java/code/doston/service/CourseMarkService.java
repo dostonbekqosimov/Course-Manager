@@ -1,6 +1,7 @@
 package code.doston.service;
 
 import code.doston.dtos.*;
+import code.doston.dtos.filterDTOs.CourseMarkFilterDTO;
 import code.doston.entity.Course;
 import code.doston.entity.Student;
 import code.doston.entity.CourseMark;
@@ -9,10 +10,13 @@ import code.doston.exceptions.DataExistsException;
 import code.doston.repository.CourseRepository;
 import code.doston.repository.CourseMarkRepository;
 import code.doston.repository.StudentRepository;
-import jakarta.validation.Valid;
+import code.doston.repository.filterRepository.CustomCourseMarkFilterRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,6 +38,8 @@ public class CourseMarkService {
     // Service ga o'tkaz
     private final CourseService courseService;
     private final StudentService studentService;
+    private final CustomCourseMarkFilterRepository customCourseMarkFilterRepository;
+
 
 
     public CourseMarkResponseDTO createStudentCourseMark(CourseMarkCreationDTO courseMarkCreationDTO) {
@@ -153,24 +159,6 @@ public class CourseMarkService {
         if (!courseMarkRepository.existsById(id)) {
             throw new DataExistsException("CourseMark not found with id: ", id);
         }
-    }
-
-    public List<MarkResponseWithDetailDTO> getStudentCourseMarksByCreatedDate(Long studentId, LocalDate date) {
-
-        // Make sure the date is in the correct format
-        LocalDateTime fromDate = LocalDateTime.of(date, LocalTime.MIN);
-        LocalDateTime toDate = LocalDateTime.of(date, LocalTime.MAX);
-        //Get the courseMark from the database
-        List<CourseMark> courseMarks = courseMarkRepository.findByStudentIdAndCreatedDateBetween(studentId, fromDate, toDate);
-
-        //Check if empty
-        if (courseMarks.isEmpty()) {
-            throw new DataNotFoundException("No marks found for student with id: " + studentId + " on date: " + date);
-        }
-
-
-        // Mapping
-        return getMarkResponseWithDetailDTOS(courseMarks);
     }
 
 
@@ -345,7 +333,6 @@ public class CourseMarkService {
     }
 
 
-
     // Get the highest mark for a given course
     public Double getHighestMarkByCourse(Long courseId) {
         CourseMark highestMark = courseMarkRepository.findTop1ByCourseIdOrderByMarkDesc(courseId);
@@ -370,8 +357,6 @@ public class CourseMarkService {
     public Long countMarksByCourse(Long courseId) {
         return (long) courseMarkRepository.findAllByCourseId(courseId).size();
     }
-
-
 
 
     // Custom methods
@@ -413,6 +398,89 @@ public class CourseMarkService {
         }
     }
 
+
+    public PageImpl<MarkResponseWithDetailDTO> getAllByCourseId(Long courseId, int page, int size) {
+
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<CourseMark> courseMarks = courseMarkRepository.fetchAllByCourseId(courseId, pageRequest);
+
+        //Check if empty
+        if (courseMarks.isEmpty()) {
+            throw new DataNotFoundException("No marks found for student with id: " + courseId + " on date: ");
+        }
+        List<MarkResponseWithDetailDTO> responseList = new ArrayList<>();
+
+        for (CourseMark courseMark : courseMarks) {
+            MarkResponseWithDetailDTO dto = new MarkResponseWithDetailDTO();
+            dto.setStudentName(courseMark.getStudent().getName());
+            dto.setCourseName(courseMark.getCourse().getName());
+            dto.setMark(courseMark.getMark());
+            dto.setCreatedDate(courseMark.getCreatedDate());
+            responseList.add(dto);
+
+        }
+
+
+        // Mapping
+        return new PageImpl<>(responseList, pageRequest, courseMarks.getTotalElements());
+
+
+    }
+
+    public PageImpl<MarkResponseWithDetailDTO> filterCourseMarks(CourseMarkFilterDTO filterDTO, int page, int size) {
+
+
+        CustomFilterResponseDTO<CourseMark> result =  customCourseMarkFilterRepository.filter(filterDTO, page, size);
+
+        List<MarkResponseWithDetailDTO> responseList = new ArrayList<>();
+
+        for (CourseMark courseMark : result.getResult()) {
+            MarkResponseWithDetailDTO dto = new MarkResponseWithDetailDTO();
+            dto.setStudentName(courseMark.getStudent().getName());
+            dto.setCourseName(courseMark.getCourse().getName());
+            dto.setMark(courseMark.getMark());
+            dto.setCreatedDate(courseMark.getCreatedDate());
+            responseList.add(dto);
+
+        }
+
+        return new PageImpl<>(responseList, PageRequest.of(page, size), result.getTotalCount());
+
+
+    }
+
+    public PageImpl<MarkResponseWithDetailDTO> getStudentCourseMarksByCreatedDate(Long studentId, LocalDate date, int page, int size) {
+
+        // Make sure the date is in the correct format
+        LocalDateTime fromDate = LocalDateTime.of(date, LocalTime.MIN);
+        LocalDateTime toDate = LocalDateTime.of(date, LocalTime.MAX);
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        //Get the courseMark from the database
+        Page<CourseMark> courseMarks = courseMarkRepository.fetchByStudentId(studentId, fromDate, toDate, pageRequest);
+
+        //Check if empty
+        if (courseMarks.isEmpty()) {
+            throw new DataNotFoundException("No marks found for course with id: " + studentId + " on date: " + date);
+        }
+
+        List<MarkResponseWithDetailDTO> responseList = new ArrayList<>();
+
+        for (CourseMark courseMark : courseMarks) {
+            MarkResponseWithDetailDTO dto = new MarkResponseWithDetailDTO();
+            dto.setStudentName(courseMark.getStudent().getName());
+            dto.setCourseName(courseMark.getCourse().getName());
+            dto.setMark(courseMark.getMark());
+            dto.setCreatedDate(courseMark.getCreatedDate());
+            responseList.add(dto);
+
+        }
+
+
+        // Mapping
+        return new PageImpl<>(responseList, pageRequest, courseMarks.getTotalElements());
+    }
 
 
 }

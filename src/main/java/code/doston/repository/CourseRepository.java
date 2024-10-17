@@ -2,6 +2,8 @@ package code.doston.repository;
 
 import code.doston.entity.Course;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,7 +22,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
 
     @Query("from Course ")
-    List<Course> getAll();
+    Page<Course> getAll(Pageable pageable);
 
     @Query("from Course where id = :id")
     Course getById(@Param("id") Long id);
@@ -31,7 +33,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     // get by price
     @Query("from Course where price = :price")
-    List<Course> getAllByPrice(BigDecimal price);
+    Page<Course> getAllByPrice(@Param("price") BigDecimal price, Pageable pageable);
 
     // get by duration
     @Query("from Course where duration = :duration")
@@ -39,7 +41,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     // get by price range
     @Query("from Course where price between :min and :max")
-    List<Course> getAllBetweenPrice(BigDecimal min, BigDecimal max);
+    Page<Course> getAllBetweenPrice(BigDecimal min, BigDecimal max, Pageable pageable);
 
     // get by date range
     @Query("from Course where createdDate between :fromDate and :toDate")

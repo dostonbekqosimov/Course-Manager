@@ -3,13 +3,20 @@ package code.doston.service;
 
 import code.doston.dtos.CourseCreationDTO;
 import code.doston.dtos.CourseResponseDTO;
+import code.doston.dtos.CustomFilterResponseDTO;
+import code.doston.dtos.filterDTOs.CourseFilterDTO;
+import code.doston.dtos.filterDTOs.StudentFilterDTO;
 import code.doston.entity.Course;
 import code.doston.exceptions.DataNotFoundException;
 import code.doston.exceptions.DataExistsException;
 import code.doston.repository.CourseRepository;
-import jakarta.validation.Valid;
+import code.doston.repository.filterRepository.CustomCourseFilterRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,6 +32,7 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
+    private final CustomCourseFilterRepository filterRepository;
 
 
     public CourseResponseDTO createCourse(CourseCreationDTO courseCreationDTO) {
@@ -43,10 +51,13 @@ public class CourseService {
         return modelMapper.map(course, CourseResponseDTO.class);
     }
 
-    public List<CourseResponseDTO> getAllCourses() {
+    public PageImpl<CourseResponseDTO> getAllCourses(Integer page, Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
 
         // Get all courses
-        List<Course> courses = courseRepository.getAll();
+        Page<Course> courses = courseRepository.getAll(pageRequest);
 
         // Check if the list is empty
         if (courses.isEmpty()) {
@@ -54,9 +65,12 @@ public class CourseService {
         }
 
         // Map each Course to CourseResponseDTO using ModelMapper
-        return courses.stream()
+        List<CourseResponseDTO> courseList = courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(courseList, pageRequest, courses.getTotalElements());
+
     }
 
     public CourseResponseDTO getCourse(Long id) {
@@ -70,7 +84,6 @@ public class CourseService {
         // Map the Course to CourseResponseDTO using ModelMapper
         return modelMapper.map(course, CourseResponseDTO.class);
     }
-
 
 
     public String deleteCourse(Long id) {
@@ -115,7 +128,8 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseResponseDTO> getByPrice(BigDecimal price) {
+    public PageImpl<CourseResponseDTO> getByPrice(BigDecimal price, Integer page, Integer size) {
+
 
         // Check if the course exists
         boolean isExist = courseRepository.existsByPrice(price);
@@ -123,11 +137,18 @@ public class CourseService {
             throw new DataNotFoundException("Course not found with price: " + price);
         }
 
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+
         // Get the course from the database
-        List<Course> courses = courseRepository.getAllByPrice(price);
-        return courses.stream()
+        Page<Course> courses = courseRepository.getAllByPrice(price, pageRequest);
+
+        List<CourseResponseDTO> courseList = courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(courseList, pageRequest, courses.getTotalElements());
+
     }
 
     public List<CourseResponseDTO> getByDuration(Integer duration) {
@@ -145,7 +166,7 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseResponseDTO> getByPriceRange(BigDecimal min, BigDecimal max) {
+    public PageImpl<CourseResponseDTO> getByPriceRange(BigDecimal min, BigDecimal max, Integer page, Integer size) {
 
 
         // Check if the minimum price is less than the maximum price
@@ -159,11 +180,21 @@ public class CourseService {
             throw new DataNotFoundException("Course not found with price between: " + min + " and " + max);
         }
 
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+
         // Get the course from the database
-        List<Course> courses = courseRepository.getAllBetweenPrice(min, max);
-        return courses.stream()
+
+        // Get the course from the database
+        Page<Course> courses = courseRepository.getAllBetweenPrice(min, max, pageRequest);
+
+
+        List<CourseResponseDTO> courseList = courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(courseList, pageRequest, courses.getTotalElements());
+
     }
 
     public List<CourseResponseDTO> getCoursesByCreatedDateBetween(LocalDate startDate, LocalDate endDate) {
@@ -189,6 +220,17 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
+    public PageImpl<CourseResponseDTO> filter(CourseFilterDTO filter, int page, Integer size) {
+
+        CustomFilterResponseDTO<Course> result = filterRepository.filter(filter, page, size);
+
+        List<CourseResponseDTO> responseDTOS = result.getResult().stream().map(course -> modelMapper.map(course, CourseResponseDTO.class)).toList();
+
+        return new PageImpl<>(responseDTOS, PageRequest.of(page, size), result.getTotalCount());
+
+
+    }
+
     public Course getCourseEntityById(Long id) {
 
         // Check if the course exists
@@ -197,6 +239,7 @@ public class CourseService {
         // Get the course from the database
         return courseRepository.findById(id).get();
     }
+
     public void idNotExists(Long id) {
         boolean isExist = courseRepository.existsById(id);
         if (!isExist) {

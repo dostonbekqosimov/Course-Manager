@@ -1,5 +1,6 @@
 package code.doston.controller;
 
+import code.doston.dtos.filterDTOs.StudentFilterDTO;
 import code.doston.dtos.StudentCreationDTO;
 import code.doston.dtos.StudentResponseDTO;
 import code.doston.entity.enums.Gender;
@@ -8,6 +9,7 @@ import code.doston.exceptions.EnumValidationException;
 import code.doston.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,14 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+
+
+    @PostMapping("/filter")
+    public ResponseEntity<PageImpl> getFilteredStudentList(@RequestBody StudentFilterDTO filter,
+                                                           @RequestParam("page") Integer page,
+                                                           @RequestParam("size") Integer size) {
+        return ResponseEntity.ok(studentService.filter(filter, page - 1, size));
+    }
 
     // Create a new student
     @PostMapping
@@ -74,9 +84,11 @@ public class StudentController {
 
     // Get students by level
     @GetMapping("/level/{level}")
-    public ResponseEntity<List<StudentResponseDTO>> getByLevel(@PathVariable Level level) {
-        List<StudentResponseDTO> students = studentService.getByLevel(level);
-        return ResponseEntity.ok(students);
+    public ResponseEntity<PageImpl<StudentResponseDTO>> getByLevel(@PathVariable Level level,
+                                                                   @RequestParam("page") Integer page,
+                                                                   @RequestParam("size") Integer size) {
+
+        return ResponseEntity.ok().body(studentService.getByLevel(level, page - 1, size));
     }
 
     // Get students by age
@@ -88,9 +100,10 @@ public class StudentController {
 
     // Get students by gender
     @GetMapping("/gender/{gender}")
-    public ResponseEntity<List<StudentResponseDTO>> getByGender(@PathVariable Gender gender) {
-        List<StudentResponseDTO> students = studentService.getByGender(gender);
-        return ResponseEntity.ok(students);
+    public ResponseEntity<PageImpl<StudentResponseDTO>> getByGender(@PathVariable Gender gender,
+                                                                    @RequestParam("page") Integer page,
+                                                                    @RequestParam("size") Integer size) {
+        return ResponseEntity.ok().body(studentService.getByGender(gender, page, size));
     }
 
     // Get students by given date

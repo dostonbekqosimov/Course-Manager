@@ -1,23 +1,28 @@
 package code.doston.service;
 
 
+import code.doston.dtos.CustomFilterResponseDTO;
+import code.doston.dtos.filterDTOs.StudentFilterDTO;
 import code.doston.dtos.StudentCreationDTO;
 import code.doston.dtos.StudentResponseDTO;
 import code.doston.entity.Student;
 import code.doston.entity.enums.Gender;
 import code.doston.entity.enums.Level;
 import code.doston.exceptions.DataNotFoundException;
-import code.doston.exceptions.EnumValidationException;
 import code.doston.exceptions.DataExistsException;
+import code.doston.repository.filterRepository.CustomStudentFilterRepository;
 import code.doston.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +33,7 @@ import java.util.stream.Collectors;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final CustomStudentFilterRepository customStudentRepository;
     private final ModelMapper modelMapper;
 
 
@@ -38,8 +44,6 @@ public class StudentService {
         studentRepository.save(student);
 
         return modelMapper.map(student, StudentResponseDTO.class);
-
-
 
 
     }
@@ -100,15 +104,21 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
-    public List<StudentResponseDTO> getByLevel(Level level) {
+    public PageImpl<StudentResponseDTO> getByLevel(Level level, Integer page, Integer size) {
 
-        List<Student> students = studentRepository.getAllStudentsByLevel(level);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
+
+        Page<Student> students = studentRepository.getAllStudentsByLevel(level, pageRequest);
+
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with level: " + level);
         }
-        return students.stream()
+        List<StudentResponseDTO> studentResponseDTOS = students.stream()
                 .map(student -> modelMapper.map(student, StudentResponseDTO.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(studentResponseDTOS, pageRequest, students.getTotalElements());
+
     }
 
     public List<StudentResponseDTO> getByAge(int age) {
@@ -122,14 +132,20 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
-    public List<StudentResponseDTO> getByGender(Gender gender) {
-        List<Student> students = studentRepository.getAllStudentsByGender(gender);
+    public PageImpl<StudentResponseDTO> getByGender(Gender gender, Integer page, Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+
+        Page<Student> students = studentRepository.getAllStudentsByGender(gender, pageRequest);
         if (students.isEmpty()) {
             throw new DataNotFoundException("No student found with gender: " + gender);
         }
-        return students.stream()
+        List<StudentResponseDTO> studentList = students.stream()
                 .map(student -> modelMapper.map(student, StudentResponseDTO.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(studentList, pageRequest, students.getTotalElements());
     }
 
     public List<StudentResponseDTO> getByCreatedDate(LocalDate createdDate) {
@@ -193,6 +209,15 @@ public class StudentService {
         // Delete the student from the database
         studentRepository.deleteById(id);
         return "Student deleted successfully";
+    }
+
+    public PageImpl<StudentResponseDTO> filter(StudentFilterDTO filterDTO, int page, int size) {
+
+        CustomFilterResponseDTO<Student> result = customStudentRepository.filter(filterDTO, page, size);
+        List<StudentResponseDTO> studentResponseDTOS = result.getResult().stream().map(student -> modelMapper.map(student, StudentResponseDTO.class)).toList();
+
+
+        return new PageImpl<>(studentResponseDTOS, PageRequest.of(page, size), result.getTotalCount());
     }
 
 

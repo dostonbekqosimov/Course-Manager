@@ -1,12 +1,14 @@
 package code.doston.controller;
 
 
-import code.doston.dtos.CourseMarkCreationDTO;
-import code.doston.dtos.MarkDTO;
+import code.doston.dtos.*;
+import code.doston.dtos.filterDTOs.CourseMarkFilterDTO;
+import code.doston.entity.CourseMark;
 import code.doston.service.CourseMarkService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,10 +64,12 @@ public class CourseMarkController {
     @GetMapping("/student/{studentId}/date")
     public ResponseEntity<?> getStudentCourseMarksByCreatedDate(
             @PathVariable Long studentId,
-            @RequestParam(value = "date") String date) {
+            @RequestParam(value = "date") String date,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
 
         LocalDate givenDate = LocalDate.parse(date);
-        return ResponseEntity.ok().body(courseMarkService.getStudentCourseMarksByCreatedDate(studentId, givenDate));
+        return ResponseEntity.ok().body(courseMarkService.getStudentCourseMarksByCreatedDate(studentId, givenDate, page - 1, size));
     }
 
     // get student's marks in given date range
@@ -85,7 +89,7 @@ public class CourseMarkController {
             @PathVariable Long studentId,
             @RequestParam(value = "sort", defaultValue = "desc") String sort) {
 
-        return ResponseEntity.ok().body(courseMarkService.getStudentCourseMarksSortedByDate(studentId,sort));
+        return ResponseEntity.ok().body(courseMarkService.getStudentCourseMarksSortedByDate(studentId, sort));
     }
 
     // get student's marks for a given course, sorted by creation date (ascending or descending).
@@ -149,10 +153,20 @@ public class CourseMarkController {
         return ResponseEntity.ok().body(count);
     }
 
+    // get the list of course_mark by courseId
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<PageImpl<MarkResponseWithDetailDTO>> getAllByCourseId(@PathVariable Long courseId,
+                                                                                @RequestParam(value = "page") int page,
+                                                                                @RequestParam(value = "size") int size) {
+
+        return ResponseEntity.ok().body(courseMarkService.getAllByCourseId(courseId, page, size));
+
+    }
+
     // Get the highest mark for a given course
     @GetMapping("/course/{courseId}/highest-mark")
     public ResponseEntity<?> getHighestMarkByCourse(@PathVariable Long courseId) {
-        Double highestMark =  courseMarkService.getHighestMarkByCourse(courseId);
+        Double highestMark = courseMarkService.getHighestMarkByCourse(courseId);
         return ResponseEntity.ok().body(highestMark);
     }
 
@@ -170,11 +184,15 @@ public class CourseMarkController {
         return ResponseEntity.ok().body(count);
     }
 
+    @PostMapping("/filter")
+    public ResponseEntity<PageImpl<MarkResponseWithDetailDTO>> filterCourseMarks(
+            @RequestBody CourseMarkFilterDTO filterDTO,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
 
-
-
-
+        return ResponseEntity.ok().body(courseMarkService.filterCourseMarks(filterDTO, page, size));
+    }
 
 
 }

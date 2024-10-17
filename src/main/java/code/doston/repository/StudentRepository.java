@@ -5,6 +5,8 @@ import code.doston.entity.Student;
 import code.doston.entity.enums.Gender;
 import code.doston.entity.enums.Level;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -36,7 +38,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     // get by level
     @Query("from Student where level = :level")
-    List<Student> getAllStudentsByLevel(Level level);
+    Page<Student> getAllStudentsByLevel(Level level, Pageable pageable);
 
     // get by age
     @Query("from Student where age = :age")
@@ -44,7 +46,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     // get by age
     @Query("from Student where gender = :gender")
-    List<Student> getAllStudentsByGender(Gender gender);
+    Page<Student> getAllStudentsByGender(Gender gender, Pageable pageable);
 
     // get by date between
     @Query("from Student where createdDate between :fromDate and :toDate")
